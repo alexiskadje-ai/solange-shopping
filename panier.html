@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panier - SOLANGE SHOPPING</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="logo">
+            <span style="font-size:1.8rem">👗</span>
+            <div class="logo-text"><h1>SOLANGE SHOPPING</h1><span>Mode & Élégance · Douala</span></div>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html">🏠 Accueil</a></li>
+            <li><a href="produits.html">🛍 Produits</a></li>
+            <li><a href="promotions.html">🏷 Promos</a></li>
+            <li><a href="commandes.html">📋 Commandes</a></li>
+            <li><a href="contact.html">📞 Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div id="zone-user" style="display:flex;align-items:center;gap:8px">
+                <a href="auth.html" class="btn btn-sm btn-violet">🔑 Connexion</a>
+            </div>
+            <a href="panier.html">
+                <button class="btn-panier">🛒 <span class="badge-panier" id="badge-panier" style="display:none">0</span></button>
+            </a>
+            <button class="menu-mobile" id="menu-toggle">☰</button>
+        </div>
+    </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,var(--primaire),var(--primaire-d));color:white;padding:36px 16px;text-align:center">
+    <h1 style="font-size:1.9rem;font-weight:800">🛒 Mon Panier</h1>
+    <p style="opacity:.9;margin-top:6px">Vérifiez vos articles avant de commander</p>
+</div>
+
+<section class="section" style="padding-top:24px">
+    <div class="container">
+        <div class="panier-container">
+
+            <!-- ARTICLES -->
+            <div class="panier-items-col" style="flex:1">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                    <h2 style="font-size:1.1rem;font-weight:700">🛍 Articles</h2>
+                    <button onclick="viderPanier()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-weight:600;font-size:.84rem;min-height:36px">
+                        🗑 Vider
+                    </button>
+                </div>
+                <div class="panier-items" id="panier-items">
+                    <div class="loader"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- RÉSUMÉ -->
+            <div class="resume-commande">
+                <h3>📋 Résumé</h3>
+                <div class="resume-ligne">
+                    <span id="resume-nb-articles">0 article(s)</span>
+                    <span id="resume-total-val">0 FCFA</span>
+                </div>
+                <div class="resume-ligne">
+                    <span>Livraison</span>
+                    <span style="color:var(--succes);font-weight:600">Gratuite</span>
+                </div>
+                <div class="resume-total">
+                    <span>Total</span>
+                    <span id="resume-total-final">0 FCFA</span>
+                </div>
+
+                <!-- CHECKOUT TABS: Compte / Invité -->
+                <div class="checkout-tabs" style="margin-bottom:14px">
+                    <button class="checkout-tab actif" data-type="compte" onclick="basculerCheckout('compte')">🔑 Compte</button>
+                    <button class="checkout-tab" data-type="invite" onclick="basculerCheckout('invite')">👤 Invité</button>
+                </div>
+
+                <!-- FORM COMPTE -->
+                <div id="checkout-compte" class="checkout-form">
+                    <div id="msg-connexion-requise" style="display:none;background:#f7eeff;border-radius:10px;padding:12px;margin-bottom:14px;font-size:.84rem;text-align:center">
+                        <a href="auth.html" style="color:var(--primaire);font-weight:700">🔑 Connectez-vous</a> pour commander en tant que membre
+                    </div>
+                </div>
+
+                <!-- FORM INVITÉ -->
+                <div id="checkout-invite" class="checkout-form" style="display:none">
+                    <div class="form-group">
+                        <label>👤 Votre nom *</label>
+                        <input type="text" id="guest-nom" placeholder="Nom complet" required>
+                    </div>
+                    <div class="form-group">
+                        <label>📧 Email</label>
+                        <input type="email" id="guest-email" placeholder="votre@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>📱 Téléphone</label>
+                        <input type="tel" id="guest-tel" placeholder="+237 6XX XXX XXX">
+                    </div>
+                </div>
+
+                <!-- PAIEMENT -->
+                <h4 style="font-weight:700;margin-bottom:10px;font-size:.9rem">💳 Paiement</h4>
+                <div class="paiement-options">
+                    <label class="option-pmt" onclick="selectionnerPaiement('momo',this)">
+                        <input type="radio" name="paiement" value="momo" style="display:none">
+                        <div class="logo-pmt logo-momo">MOMO</div>
+                        <div><strong style="font-size:.86rem">MTN Mobile Money</strong><p style="font-size:.75rem;color:#888">Instantané</p></div>
+                    </label>
+                    <label class="option-pmt" onclick="selectionnerPaiement('orange_money',this)">
+                        <input type="radio" name="paiement" value="orange_money" style="display:none">
+                        <div class="logo-pmt logo-om">OM</div>
+                        <div><strong style="font-size:.86rem">Orange Money</strong><p style="font-size:.75rem;color:#888">Sécurisé</p></div>
+                    </label>
+                    <label class="option-pmt" onclick="selectionnerPaiement('cash',this)">
+                        <input type="radio" name="paiement" value="cash" style="display:none">
+                        <div class="logo-pmt logo-cash">💵</div>
+                        <div><strong style="font-size:.86rem">Espèces</strong><p style="font-size:.75rem;color:#888">À la livraison</p></div>
+                    </label>
+                    <label class="option-pmt" onclick="selectionnerPaiement('a_la_boutique',this)">
+                        <input type="radio" name="paiement" value="a_la_boutique" style="display:none">
+                        <div class="logo-pmt logo-boutique">🏪</div>
+                        <div><strong style="font-size:.86rem">En boutique</strong><p style="font-size:.75rem;color:#888">Akwa, Douala</p></div>
+                    </label>
+                </div>
+
+                <div id="champ-transaction" style="display:none" class="form-group">
+                    <label id="label-tx">📱 Numéro de transaction</label>
+                    <input type="text" id="input-transaction" placeholder="Ex: 1234567890">
+                </div>
+                <div id="champ-adresse" style="display:none" class="form-group">
+                    <label>📍 Adresse de livraison</label>
+                    <input type="text" id="input-adresse" placeholder="Ex: Bali, Douala">
+                </div>
+
+                <button id="btn-commander" onclick="passerCommande()" class="btn btn-violet btn-plein" style="margin-top:12px">
+                    ✅ Confirmer la commande
+                </button>
+                <a href="produits.html" style="display:block;text-align:center;margin-top:10px;font-size:.82rem;color:var(--primaire)">
+                    ← Continuer les achats
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-bottom" style="padding:18px;text-align:center;background:var(--sombre);color:#666;font-size:.78rem">
+        © 2024 SOLANGE SHOPPING · Akwa, Douala, Cameroun
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    await verifierSession();
+    chargerPanier();
+
+    // Show connect message if not logged in
+    if (!utilisateurCourant) {
+        document.getElementById('msg-connexion-requise').style.display = 'block';
+    }
+
+    // Sync totals
+    const obs = new MutationObserver(() => {
+        const v = document.getElementById('resume-total-val')?.textContent;
+        const f = document.getElementById('resume-total-final');
+        if (v && f) f.textContent = v;
+    });
+    const el = document.getElementById('resume-total-val');
+    if (el) obs.observe(el, { childList:true, characterData:true, subtree:true });
+});
+
+async function viderPanier() {
+    if (!confirm('Vider le panier ?')) return;
+    if (utilisateurCourant) {
+        await apiFetch('panier.php', { action:'vider' }, 'POST');
+    } else {
+        guestCart = []; localStorage.removeItem('ss_guest_cart');
+    }
+    notifier('Panier vidé.','info'); chargerPanier();
+}
+</script>
+</body>
+</html>

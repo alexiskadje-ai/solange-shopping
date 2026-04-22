@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - SOLANGE SHOPPING</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="logo">
+            <span style="font-size:2rem">👗</span>
+            <div class="logo-text"><h1>SOLANGE SHOPPING</h1><span>Mode & Élégance · Douala</span></div>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html">🏠 Accueil</a></li>
+            <li><a href="produits.html">🛍 Produits</a></li>
+            <li><a href="promotions.html">🏷 Promotions</a></li>
+            <li><a href="commandes.html">📋 Commandes</a></li>
+            <li><a href="contact.html" class="actif">📞 Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div id="zone-user" style="display:flex;align-items:center;gap:10px">
+                <a href="auth.html" class="btn btn-sm btn-violet">🔑 Connexion</a>
+            </div>
+            <a href="panier.html"><button class="btn-panier">🛒 Panier <span class="badge-panier" id="badge-panier" style="display:none">0</span></button></a>
+            <button class="menu-mobile" id="menu-toggle">☰</button>
+        </div>
+    </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,var(--primaire),var(--primaire-d));color:white;padding:50px 20px;text-align:center">
+    <h1 style="font-size:2.2rem;font-weight:800">📞 Contactez-nous</h1>
+    <p style="opacity:.9;margin-top:8px">Nous sommes disponibles pour vous aider</p>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="contact-grid">
+
+            <!-- INFORMATIONS CONTACT -->
+            <div class="contact-info">
+                <h3>🏪 SOLANGE SHOPPING</h3>
+                <p style="color:#666;margin-bottom:25px;font-size:.95rem">
+                    Venez nous rendre visite ou contactez-nous directement.
+                    Notre équipe est là pour vous accueillir et vous conseiller !
+                </p>
+
+                <div class="contact-item">
+                    <div class="icone">📍</div>
+                    <div>
+                        <h4>Adresse</h4>
+                        <p>Akwa, Douala, Cameroun</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="icone">📱</div>
+                    <div>
+                        <h4>Téléphone / WhatsApp</h4>
+                        <p>+237 691 487 229</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="icone">⏰</div>
+                    <div>
+                        <h4>Horaires d'ouverture</h4>
+                        <p>Lundi – Samedi : 8h00 – 20h00<br>Dimanche : 10h00 – 18h00</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="icone">📱</div>
+                    <div>
+                        <h4>Paiement accepté</h4>
+                        <p>MTN Mobile Money · Orange Money · Espèces</p>
+                    </div>
+                </div>
+
+                <!-- CARTE GOOGLE MAPS (lien) -->
+                <div style="background:var(--gris-clair);border-radius:var(--rayon);padding:20px;margin-top:20px;text-align:center">
+                    <p style="font-size:.9rem;color:#666;margin-bottom:12px">📍 Localisation</p>
+                    <div style="background:#e0e0ef;border-radius:10px;height:150px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:10px">
+                        🗺️
+                    </div>
+                    <a href="https://maps.google.com/?q=Akwa+Douala+Cameroun" target="_blank" class="btn btn-sm btn-violet">
+                        📍 Voir sur Google Maps
+                    </a>
+                </div>
+            </div>
+
+            <!-- FORMULAIRE CONTACT -->
+            <div>
+                <div style="background:white;border-radius:var(--rayon);padding:30px;box-shadow:var(--ombre)">
+                    <h3 style="font-size:1.4rem;font-weight:700;color:var(--sombre);margin-bottom:5px">
+                        💬 Envoyez-nous un message
+                    </h3>
+                    <p style="color:#888;font-size:.88rem;margin-bottom:25px">
+                        Posez vos questions, commandes spéciales ou demandes de renseignements
+                    </p>
+
+                    <form onsubmit="envoyerContact(event)">
+                        <div class="form-group">
+                            <label>👤 Votre nom *</label>
+                            <input type="text" name="nom" placeholder="Votre nom complet" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>📧 Email</label>
+                                <input type="email" name="email" placeholder="votre@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>📱 Téléphone</label>
+                                <input type="tel" name="telephone" placeholder="+237 6XX XXX XXX">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>💬 Votre message *</label>
+                            <textarea name="message" placeholder="Votre message, question ou demande..." rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-violet btn-plein">
+                            📤 Envoyer le message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- BOUTONS CONTACT DIRECT -->
+                <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <a href="tel:+237691487229" class="btn btn-sm btn-rose" style="text-align:center;justify-content:center">
+                        📞 Appeler maintenant
+                    </a>
+                    <a href="https://wa.me/237691487229" target="_blank" class="btn btn-sm" style="background:#25D366;color:white;border:none;text-align:center;justify-content:center">
+                        💬 WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h4>👗 SOLANGE SHOPPING</h4>
+            <p>📞 +237 691 487 229</p>
+            <p>📍 Akwa, Douala, Cameroun</p>
+        </div>
+        <div class="footer-col">
+            <h4>Navigation</h4>
+            <a href="index.html">Accueil</a>
+            <a href="produits.html">Produits</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h4>Paiement</h4>
+            <p>📱 MTN Mobile Money</p>
+            <p>🟠 Orange Money</p>
+        </div>
+        <div class="footer-col">
+            <h4>Horaires</h4>
+            <p>Lun - Sam : 8h - 20h</p>
+            <p>Dimanche : 10h - 18h</p>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2024 SOLANGE SHOPPING · Akwa, Douala, Cameroun</div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

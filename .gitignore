@@ -1,0 +1,14 @@
+# Fichiers sensibles
+php/config_local.php
+
+# Uploads utilisateur
+images/uploads/
+
+# Système
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/settings.json
+.idea/

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produits - SOLANGE SHOPPING</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="logo">
+            <span style="font-size:1.8rem">👗</span>
+            <div class="logo-text"><h1>SOLANGE SHOPPING</h1><span>Mode & Élégance · Douala</span></div>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html">🏠 Accueil</a></li>
+            <li><a href="produits.html" class="actif">🛍 Produits</a></li>
+            <li><a href="promotions.html">🏷 Promos</a></li>
+            <li><a href="commandes.html">📋 Commandes</a></li>
+            <li><a href="contact.html">📞 Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div id="zone-user" style="display:flex;align-items:center;gap:8px">
+                <a href="auth.html" class="btn btn-sm btn-violet">🔑 Connexion</a>
+            </div>
+            <a href="panier.html">
+                <button class="btn-panier">🛒 <span class="badge-panier" id="badge-panier" style="display:none">0</span></button>
+            </a>
+            <button class="menu-mobile" id="menu-toggle">☰</button>
+        </div>
+    </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,var(--primaire),var(--primaire-d));color:white;padding:36px 16px;text-align:center">
+    <h1 style="font-size:1.9rem;font-weight:800">🛍 Catalogue</h1>
+    <p style="opacity:.9;margin-top:6px">Vêtements & chaussures tendance</p>
+</div>
+
+<section class="section" style="background:var(--gris-clair);padding-top:28px">
+    <div class="container">
+
+        <!-- SEARCH + AUTOCOMPLETE -->
+        <div class="search-wrapper">
+            <div class="search-bar">
+                <input type="text" id="input-recherche" placeholder="🔍 Rechercher..." autocomplete="off"
+                    oninput="fetchAutocomplete && fetchAutocomplete(this.value)"
+                    onkeyup="if(event.key==='Enter') rechercherProduits()">
+                <button onclick="rechercherProduits()">Rechercher</button>
+            </div>
+            <div id="autocomplete-list" class="autocomplete-list" style="display:none"></div>
+        </div>
+
+        <!-- CATÉGORIES -->
+        <div class="categories-grid" id="categories-grid" style="margin-bottom:24px">
+            <div class="loader"><div class="spinner"></div></div>
+        </div>
+
+        <!-- FILTRES AVANCÉS -->
+        <div class="filtres-avances">
+            <h4>🔧 Filtres avancés</h4>
+            <div class="filtres-row">
+                <div class="filtre-groupe">
+                    <label>Trier par</label>
+                    <select id="select-tri" onchange="appliquerFiltres()">
+                        <option value="defaut">✨ Pertinence</option>
+                        <option value="prix_asc">💰 Prix croissant</option>
+                        <option value="prix_desc">💎 Prix décroissant</option>
+                        <option value="nouveau">🆕 Nouveautés</option>
+                        <option value="promo">🏷 Promotions d'abord</option>
+                    </select>
+                </div>
+                <div class="filtre-groupe">
+                    <label>Taille</label>
+                    <select id="select-taille" onchange="appliquerFiltres()">
+                        <option value="">Toutes tailles</option>
+                        <option>XS</option><option>S</option><option>M</option>
+                        <option>L</option><option>XL</option><option>XXL</option>
+                        <option>36</option><option>37</option><option>38</option>
+                        <option>39</option><option>40</option><option>41</option>
+                        <option>42</option><option>43</option><option>44</option>
+                    </select>
+                </div>
+                <div class="filtre-groupe">
+                    <label>Couleur</label>
+                    <select id="select-couleur" onchange="appliquerFiltres()">
+                        <option value="">Toutes couleurs</option>
+                        <option>Noir</option><option>Blanc</option><option>Rouge</option>
+                        <option>Bleu</option><option>Vert</option><option>Marron</option>
+                        <option>Beige</option><option>Multicolore</option>
+                    </select>
+                </div>
+                <div class="filtre-groupe">
+                    <label>Prix max : <strong id="label-prix-max">100 000 FCFA</strong></label>
+                    <input type="range" id="range-prix" min="0" max="100000" step="1000" value="100000"
+                        oninput="majLabelPrix(this)" onchange="appliquerFiltres()">
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+                <button class="filtre-btn actif" onclick="setActif(this);chargerProduits()">Tous</button>
+                <button class="filtre-btn" onclick="setActif(this);chargerProduits({promo:1})">🏷 Promos</button>
+                <button class="btn btn-sm btn-outline" onclick="resetFiltres()" style="margin-left:auto">🔄 Réinitialiser</button>
+            </div>
+        </div>
+
+        <!-- COUNT + SORT -->
+        <div class="sort-bar">
+            <span id="sort-count"></span>
+        </div>
+
+        <!-- GRILLE PRODUITS -->
+        <div class="produits-grid" id="produits-grid">
+            <div class="loader"><div class="spinner"></div></div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-bottom" style="padding:20px;text-align:center;background:var(--sombre);color:#666;font-size:.78rem">
+        © 2024 SOLANGE SHOPPING · Akwa, Douala, Cameroun
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+    chargerProduits();
+    chargerCategories();
+
+    const urlP = new URLSearchParams(window.location.search);
+    if (urlP.get('cat')) chargerProduits({ categorie: urlP.get('cat') });
+
+    function setActif(el) {
+        document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('actif'));
+        el.classList.add('actif');
+    }
+
+    window.filtrerCategorie = function(id, el) {
+        document.querySelectorAll('.categorie-card').forEach(c => c.classList.remove('active'));
+        if (el) el.classList.add('active');
+        document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('actif'));
+        chargerProduits({ categorie: id });
+    };
+</script>
+</body>
+</html>

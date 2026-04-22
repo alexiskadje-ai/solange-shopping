@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Compte - SOLANGE SHOPPING</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="logo">
+            <span style="font-size:1.8rem">👗</span>
+            <div class="logo-text"><h1>SOLANGE SHOPPING</h1><span>Mode & Élégance · Douala</span></div>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html">🏠 Accueil</a></li>
+            <li><a href="produits.html">🛍 Produits</a></li>
+            <li><a href="promotions.html">🏷 Promos</a></li>
+            <li><a href="commandes.html">📋 Commandes</a></li>
+            <li><a href="contact.html">📞 Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div id="zone-user" style="display:flex;align-items:center;gap:8px">
+                <a href="auth.html" class="btn btn-sm btn-violet">🔑 Connexion</a>
+            </div>
+            <a href="panier.html">
+                <button class="btn-panier">🛒 <span class="badge-panier" id="badge-panier" style="display:none">0</span></button>
+            </a>
+            <button class="menu-mobile" id="menu-toggle">☰</button>
+        </div>
+    </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,var(--primaire),var(--primaire-d));color:white;padding:36px 16px;text-align:center">
+    <div id="profile-avatar" style="font-size:3rem;margin-bottom:8px">👤</div>
+    <h1 id="profile-name" style="font-size:1.6rem;font-weight:800">Mon Compte</h1>
+    <p id="profile-email" style="opacity:.8;font-size:.9rem;margin-top:4px"></p>
+</div>
+
+<section class="section" style="padding-top:20px">
+    <div class="container" style="max-width:860px">
+
+        <!-- ONGLETS -->
+        <div class="profile-tabs">
+            <button class="profile-tab actif" onclick="showTab('commandes',this)">📦 Commandes</button>
+            <button class="profile-tab" onclick="showTab('wishlist',this)">❤️ Favoris</button>
+            <button class="profile-tab" onclick="showTab('compte',this)">⚙️ Compte</button>
+        </div>
+
+        <!-- TAB COMMANDES -->
+        <div id="tab-commandes">
+            <div id="commandes-container"><div class="loader"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- TAB WISHLIST -->
+        <div id="tab-wishlist" style="display:none">
+            <div class="produits-grid wishlist-grid" id="wishlist-grid">
+                <div class="loader"><div class="spinner"></div></div>
+            </div>
+        </div>
+
+        <!-- TAB COMPTE -->
+        <div id="tab-compte" style="display:none">
+            <div style="background:white;border-radius:var(--rayon);padding:24px;box-shadow:var(--ombre)">
+                <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:20px">⚙️ Informations du compte</h3>
+                <div id="compte-info"></div>
+                <hr style="border:none;border-top:1px solid var(--gris);margin:20px 0">
+                <button onclick="deconnexion()" class="btn btn-rose">🚪 Se déconnecter</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-bottom" style="padding:18px;text-align:center;background:var(--sombre);color:#666;font-size:.78rem">
+        © 2024 SOLANGE SHOPPING · Akwa, Douala, Cameroun
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    await verifierSession();
+    if (!utilisateurCourant) { location.href = 'auth.html'; return; }
+
+    // Header
+    document.getElementById('profile-name').textContent = utilisateurCourant.prenom + ' ' + utilisateurCourant.nom;
+    document.getElementById('profile-email').textContent = utilisateurCourant.email;
+
+    chargerMesCommandes();
+});
+
+function showTab(name, el) {
+    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('actif'));
+    document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+    el.classList.add('actif');
+    document.getElementById('tab-' + name).style.display = 'block';
+    if (name === 'wishlist') chargerWishlist();
+    if (name === 'compte') afficherCompte();
+}
+
+function afficherCompte() {
+    if (!utilisateurCourant) return;
+    document.getElementById('compte-info').innerHTML = `
+        <div style="display:grid;gap:14px">
+            <div style="background:var(--gris-clair);border-radius:10px;padding:14px">
+                <p style="font-size:.78rem;color:#888;margin-bottom:4px">Nom complet</p>
+                <p style="font-weight:700">${escapeHtml(utilisateurCourant.prenom)} ${escapeHtml(utilisateurCourant.nom)}</p>
+            </div>
+            <div style="background:var(--gris-clair);border-radius:10px;padding:14px">
+                <p style="font-size:.78rem;color:#888;margin-bottom:4px">Adresse email</p>
+                <p style="font-weight:700">${escapeHtml(utilisateurCourant.email)}</p>
+            </div>
+            <div style="background:var(--gris-clair);border-radius:10px;padding:14px">
+                <p style="font-size:.78rem;color:#888;margin-bottom:4px">Type de compte</p>
+                <p style="font-weight:700">${utilisateurCourant.role === 'admin' ? '⚙️ Administrateur' : '👤 Client'}</p>
+            </div>
+        </div>
+    `;
+}
+
+async function chargerMesCommandes() {
+    const data = await apiFetch('panier.php?action=mes_commandes');
+    const c = document.getElementById('commandes-container');
+    if (!data || data.erreur) { c.innerHTML = 'Erreur.'; return; }
+    if (!data.length) {
+        c.innerHTML = videHTML('📦','Aucune commande','Vous n\'avez pas encore commandé.',`<a href="produits.html" class="btn btn-violet">🛍 Faire mes achats</a>`);
+        return;
+    }
+
+    const statuts = { en_attente:'⏳ En attente', confirmee:'✅ Confirmée', expediee:'🚚 Expédiée', livree:'🎉 Livrée', annulee:'❌ Annulée' };
+    const trackSteps = ['en_attente','confirmee','expediee','livree'];
+    const modes = { momo:'MTN MOMO', orange_money:'Orange Money', a_la_boutique:'Boutique', cash:'Espèces' };
+
+    c.innerHTML = data.map(cmd => {
+        const date = new Date(cmd.date_commande).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+        const stepIdx = trackSteps.indexOf(cmd.statut);
+        const trackHTML = cmd.statut !== 'annulee' ? `
+            <div class="tracking-bar">
+                ${trackSteps.map((s, i) => {
+                    const icons = { en_attente:'⏳', confirmee:'✅', expediee:'🚚', livree:'🎉' };
+                    const labels = { en_attente:'Reçue', confirmee:'Confirmée', expediee:'Expédiée', livree:'Livrée' };
+                    const cls = i < stepIdx ? 'done' : i === stepIdx ? 'current' : '';
+                    return `${i > 0 ? `<div class="tracking-line ${i <= stepIdx ? 'done' : ''}"></div>` : ''}
+                    <div class="tracking-step ${cls}">
+                        <div class="t-icon">${icons[s]}</div>
+                        <div class="t-label">${labels[s]}</div>
+                    </div>`;
+                }).join('')}
+            </div>` : '';
+
+        return `
+        <div class="commande-card">
+            <div class="commande-header">
+                <div>
+                    <strong>Commande #${cmd.id}</strong>
+                    <p style="font-size:.78rem;color:#888;margin-top:2px">📅 ${date}</p>
+                </div>
+                <span class="statut-badge statut-${cmd.statut}">${statuts[cmd.statut] || cmd.statut}</span>
+            </div>
+            ${trackHTML}
+            <div style="display:flex;justify-content:space-between;font-size:.86rem;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+                <span>💳 ${modes[cmd.mode_paiement] || cmd.mode_paiement}</span>
+                <span style="font-size:1.1rem;font-weight:800;color:var(--primaire)">${formatPrix(cmd.total)}</span>
+            </div>
+            ${cmd.details?.length ? `
+            <div style="border-top:1px solid var(--gris);padding-top:10px">
+                ${cmd.details.map(d => `
+                    <div style="display:flex;justify-content:space-between;font-size:.82rem;padding:3px 0">
+                        <span>🛍 ${escapeHtml(d.produit_nom)} × ${d.quantite}</span>
+                        <span style="font-weight:600">${formatPrix(d.prix_unitaire * d.quantite)}</span>
+                    </div>`).join('')}
+            </div>` : ''}
+        </div>`;
+    }).join('');
+}
+</script>
+</body>
+</html>

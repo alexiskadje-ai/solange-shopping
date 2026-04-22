@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLANGE SHOPPING - Mode & Élégance | Akwa, Douala</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👗</text></svg>">
+</head>
+<body>
+
+<!-- BARRE PROMO -->
+<div class="promo-band">
+    🎉 Bienvenue chez SOLANGE SHOPPING !
+    <span>-20% SUR LES PROMOS</span>
+    Paiement MTN MOMO & Orange Money disponible !
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="logo">
+            <span style="font-size:2.2rem">👗</span>
+            <div class="logo-text">
+                <h1>SOLANGE SHOPPING</h1>
+                <span>Mode & Élégance · Douala</span>
+            </div>
+        </a>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html">🏠 Accueil</a></li>
+            <li><a href="produits.html">🛍 Produits</a></li>
+            <li><a href="promotions.html">🏷 Promotions</a></li>
+            <li><a href="commandes.html">📋 Commandes</a></li>
+            <li><a href="profile.html">👤 Mon Compte</a></li>
+            <li><a href="contact.html">📞 Contact</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <div id="zone-user" style="display:flex;align-items:center;gap:10px">
+                <a href="auth.html" class="btn btn-sm btn-violet">🔑 Connexion</a>
+            </div>
+            <a href="panier.html">
+                <button class="btn-panier">
+                    🛒 Panier
+                    <span class="badge-panier" id="badge-panier" style="display:none">0</span>
+                </button>
+            </a>
+            <button class="menu-mobile" id="menu-toggle">☰</button>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h2>Mode & Élégance<br><span>à Prix Abordables</span></h2>
+        <p>Découvrez notre collection de vêtements et chaussures tendance.<br>Livraison à Douala · Paiement Mobile Money</p>
+        <div class="hero-btns">
+            <a href="produits.html" class="btn btn-primaire">🛍 Voir les produits</a>
+            <a href="promotions.html" class="btn btn-secondaire">🏷 Nos promotions</a>
+        </div>
+    </div>
+</section>
+
+<!-- INFOS BOUTIQUE -->
+<section style="background:white;padding:25px 20px;">
+    <div class="container">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;text-align:center">
+            <div>
+                <div style="font-size:2rem;margin-bottom:8px">🚀</div>
+                <strong>Livraison rapide</strong>
+                <p style="font-size:.85rem;color:#888">À Douala et environs</p>
+            </div>
+            <div>
+                <div style="font-size:2rem;margin-bottom:8px">📱</div>
+                <strong>Paiement Mobile</strong>
+                <p style="font-size:.85rem;color:#888">MTN MOMO · Orange Money</p>
+            </div>
+            <div>
+                <div style="font-size:2rem;margin-bottom:8px">✅</div>
+                <strong>Qualité garantie</strong>
+                <p style="font-size:.85rem;color:#888">Produits sélectionnés</p>
+            </div>
+            <div>
+                <div style="font-size:2rem;margin-bottom:8px">📞</div>
+                <strong>Support client</strong>
+                <p style="font-size:.85rem;color:#888">+237 691 487 229</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CATÉGORIES -->
+<section class="section" style="background:var(--gris-clair)">
+    <div class="container">
+        <div class="section-titre">
+            <h2>Nos Catégories</h2>
+            <div class="ligne-deco"></div>
+            <p>Trouvez ce qui vous correspond</p>
+        </div>
+        <div class="categories-grid" id="categories-grid">
+            <div class="loader"><div class="spinner"></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- PRODUITS VEDETTES -->
+<section class="section" style="background:white">
+    <div class="container">
+        <div class="section-titre">
+            <h2>Nos Produits</h2>
+            <div class="ligne-deco"></div>
+            <p>Une sélection de vêtements et chaussures tendance</p>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="input-recherche" placeholder="🔍 Rechercher un produit..." onkeyup="if(event.key==='Enter') rechercherProduits()">
+            <button onclick="rechercherProduits()">Rechercher</button>
+        </div>
+
+        <div class="filtres-bar" id="filtres">
+            <button class="filtre-btn actif" onclick="filtrerTout(this)">Tous</button>
+            <button class="filtre-btn" onclick="filtrerParCategorie(1, this)">👗 Femme</button>
+            <button class="filtre-btn" onclick="filtrerParCategorie(2, this)">👔 Homme</button>
+            <button class="filtre-btn" onclick="filtrerParCategorie(3, this)">👠 Chaussures Femme</button>
+            <button class="filtre-btn" onclick="filtrerParCategorie(4, this)">👞 Chaussures Homme</button>
+        </div>
+
+        <div class="produits-grid" id="produits-grid">
+            <div class="loader"><div class="spinner"></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- PROMOTIONS -->
+<section class="section" style="background:linear-gradient(135deg,var(--primaire),var(--primaire-d))">
+    <div class="container" style="text-align:center">
+        <h2 style="color:white;font-size:2rem;margin-bottom:10px">🏷 Offres Spéciales</h2>
+        <div class="ligne-deco"></div>
+        <p style="color:rgba(255,255,255,.8);margin-bottom:30px">Profitez de nos promotions exclusives !</p>
+        <a href="promotions.html" class="btn btn-primaire" style="font-size:1rem;padding:15px 40px">
+            Voir toutes les promotions →
+        </a>
+    </div>
+</section>
+
+<!-- À PROPOS -->
+<section class="section" style="background:white">
+    <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center">
+            <div>
+                <h2 style="font-size:2rem;font-weight:800;color:var(--sombre);margin-bottom:15px">
+                    À Propos de<br><span style="color:var(--primaire)">SOLANGE SHOPPING</span>
+                </h2>
+                <div class="ligne-deco" style="margin:0 0 20px"></div>
+                <p style="color:#666;line-height:1.8;margin-bottom:15px">
+                    Solange Shopping est votre boutique de mode en ligne basée à <strong>Akwa, Douala, Cameroun</strong>.
+                    Nous proposons une large gamme de vêtements et chaussures tendance pour hommes et femmes,
+                    à des prix abordables et accessibles à tous.
+                </p>
+                <p style="color:#666;line-height:1.8;margin-bottom:20px">
+                    Commandez en ligne et payez facilement par <strong>MTN Mobile Money</strong> ou
+                    <strong>Orange Money</strong>, ou venez directement à la boutique !
+                </p>
+                <a href="contact.html" class="btn btn-violet">📍 Nous trouver</a>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+                <div style="background:linear-gradient(135deg,#f0e6ff,#e6d0ff);border-radius:16px;padding:25px;text-align:center">
+                    <div style="font-size:2.5rem;margin-bottom:8px">👗</div>
+                    <strong>Vêtements</strong>
+                    <p style="font-size:.82rem;color:#888">Robes, tops, chemises...</p>
+                </div>
+                <div style="background:linear-gradient(135deg,#ffe6f0,#ffd0e6);border-radius:16px;padding:25px;text-align:center">
+                    <div style="font-size:2.5rem;margin-bottom:8px">👟</div>
+                    <strong>Chaussures</strong>
+                    <p style="font-size:.82rem;color:#888">Sandales, baskets, escarpins...</p>
+                </div>
+                <div style="background:linear-gradient(135deg,#fff3d0,#ffe8a0);border-radius:16px;padding:25px;text-align:center">
+                    <div style="font-size:2.5rem;margin-bottom:8px">📱</div>
+                    <strong>Mobile Money</strong>
+                    <p style="font-size:.82rem;color:#888">MTN MOMO & Orange</p>
+                </div>
+                <div style="background:linear-gradient(135deg,#d0f0e6,#a0e8cc);border-radius:16px;padding:25px;text-align:center">
+                    <div style="font-size:2.5rem;margin-bottom:8px">🚚</div>
+                    <strong>Livraison</strong>
+                    <p style="font-size:.82rem;color:#888">À Douala & environs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h4>👗 SOLANGE SHOPPING</h4>
+            <p>Votre boutique de mode en ligne à Akwa, Douala. Vêtements et chaussures tendance à prix abordables.</p>
+            <p style="margin-top:15px">📞 +237 691 487 229</p>
+            <p>📍 Akwa, Douala, Cameroun</p>
+        </div>
+        <div class="footer-col">
+            <h4>Navigation</h4>
+            <a href="index.html">Accueil</a>
+            <a href="produits.html">Produits</a>
+            <a href="promotions.html">Promotions</a>
+            <a href="commandes.html">Mes commandes</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h4>Catégories</h4>
+            <a href="produits.html?cat=1">Vêtements Femme</a>
+            <a href="produits.html?cat=2">Vêtements Homme</a>
+            <a href="produits.html?cat=3">Chaussures Femme</a>
+            <a href="produits.html?cat=4">Chaussures Homme</a>
+        </div>
+        <div class="footer-col">
+            <h4>Paiement</h4>
+            <p>📱 MTN Mobile Money</p>
+            <p>🟠 Orange Money</p>
+            <p>🏪 Paiement en boutique</p>
+            <p style="margin-top:15px;font-size:.8rem;color:#555">
+                Lun - Sam : 8h à 20h<br>Dimanche : 10h à 18h
+            </p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2024 SOLANGE SHOPPING · Akwa, Douala, Cameroun · Tous droits réservés</p>
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+    // Charger les catégories et produits au chargement
+    chargerCategories();
+    chargerProduits();
+
+    function filtrerTout(el) {
+        document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('actif'));
+        el.classList.add('actif');
+        chargerProduits();
+    }
+
+    function filtrerParCategorie(id, el) {
+        document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('actif'));
+        el.classList.add('actif');
+        chargerProduits({ categorie: id });
+    }
+
+    // Lire paramètre URL cat=
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('cat')) {
+        chargerProduits({ categorie: urlParams.get('cat') });
+    }
+</script>
+</body>
+</html>

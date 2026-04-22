@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - SOLANGE SHOPPING</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .admin-nav {
+            background: var(--sombre);
+            color: white;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .admin-nav a {
+            color: #ccc;
+            padding: 18px 16px;
+            font-size: .88rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+        .admin-nav a:hover, .admin-nav a.actif {
+            color: white;
+            border-bottom-color: var(--secondaire);
+        }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--gris-clair); padding: 12px 15px; text-align: left; font-size: .85rem; font-weight: 700; color: var(--sombre); }
+        td { padding: 12px 15px; border-bottom: 1px solid var(--gris); font-size: .88rem; }
+        tr:hover td { background: #f9f5ff; }
+        .panel { background: white; border-radius: var(--rayon); box-shadow: var(--ombre); padding: 25px; margin-bottom: 25px; }
+    </style>
+</head>
+<body style="background:var(--gris-clair)">
+
+<!-- HEADER ADMIN -->
+<div class="admin-header">
+    <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.8rem">👗</span>
+        <div>
+            <h2 style="font-size:1.1rem;font-weight:800">SOLANGE SHOPPING</h2>
+            <p style="font-size:.75rem;opacity:.7">Panneau d'Administration</p>
+        </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+        <span id="admin-nom" style="font-size:.88rem;opacity:.8"></span>
+        <a href="../index.html" class="btn btn-sm" style="border:2px solid rgba(255,255,255,.3);color:white">🏠 Boutique</a>
+        <button onclick="deconnexion()" class="btn btn-sm btn-rose">Déconnexion</button>
+    </div>
+</div>
+
+<!-- NAV ADMIN -->
+<div class="admin-nav">
+    <a href="#" class="actif" onclick="afficherSection('dashboard',this)">📊 Dashboard</a>
+    <a href="#" onclick="afficherSection('produits',this)">📦 Produits</a>
+    <a href="#" onclick="afficherSection('commandes',this)">🛒 Commandes</a>
+    <a href="#" onclick="afficherSection('messages',this)">💬 Messages</a>
+    <a href="#" onclick="afficherSection('ajouter',this)">➕ Nouveau produit</a>
+</div>
+
+<div style="max-width:1200px;margin:0 auto;padding:30px 20px">
+
+    <!-- SECTION DASHBOARD -->
+    <div id="section-dashboard">
+        <div class="stats-grid" id="stats">
+            <div class="loader"><div class="spinner"></div></div>
+        </div>
+        <div class="panel">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:20px">📦 Aperçu des derniers produits</h3>
+            <div id="admin-produits-preview">
+                <div class="loader"><div class="spinner"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION PRODUITS -->
+    <div id="section-produits" style="display:none">
+        <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+                <h3 style="font-size:1.1rem;font-weight:700">📦 Gestion des produits</h3>
+                <button onclick="afficherSection('ajouter',null)" class="btn btn-sm btn-violet">➕ Ajouter</button>
+            </div>
+            <div class="table-responsive">
+                <table id="table-produits">
+                    <tr><td colspan="7" style="text-align:center;padding:30px"><div class="loader"><div class="spinner"></div></div></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION COMMANDES -->
+    <div id="section-commandes" style="display:none">
+        <div class="panel">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:20px">🛒 Toutes les commandes</h3>
+            <div class="table-responsive">
+                <table id="table-commandes">
+                    <tr><td colspan="7" style="text-align:center;padding:30px"><div class="loader"><div class="spinner"></div></div></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION MESSAGES -->
+    <div id="section-messages" style="display:none">
+        <div class="panel">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:20px">💬 Messages clients</h3>
+            <div id="liste-messages"><div class="loader"><div class="spinner"></div></div></div>
+        </div>
+    </div>
+
+    <!-- SECTION AJOUTER PRODUIT -->
+    <div id="section-ajouter" style="display:none">
+        <div class="panel" style="max-width:700px">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:20px">➕ Ajouter / Modifier un produit</h3>
+            <form id="form-produit" onsubmit="soumettreFormProduit(event)">
+                <input type="hidden" id="produit-id" value="">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom du produit *</label>
+                        <input type="text" id="p-nom" required placeholder="Ex: Robe Africaine">
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie *</label>
+                        <select id="p-categorie" required>
+                            <option value="1">👗 Vêtements Femme</option>
+                            <option value="2">👔 Vêtements Homme</option>
+                            <option value="3">👠 Chaussures Femme</option>
+                            <option value="4">👞 Chaussures Homme</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="p-description" placeholder="Description du produit..." rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prix (FCFA) *</label>
+                        <input type="number" id="p-prix" required min="0" placeholder="15000">
+                    </div>
+                    <div class="form-group">
+                        <label>Prix promotionnel (FCFA)</label>
+                        <input type="number" id="p-prix-promo" min="0" placeholder="12000">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Taille(s)</label>
+                        <input type="text" id="p-taille" placeholder="S, M, L, XL">
+                    </div>
+                    <div class="form-group">
+                        <label>Couleur</label>
+                        <input type="text" id="p-couleur" placeholder="Noir, Rouge...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Stock</label>
+                        <input type="number" id="p-stock" value="10" min="0">
+                    </div>
+                    <div class="form-group" style="display:flex;align-items:center;padding-top:30px">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                            <input type="checkbox" id="p-promo" style="width:18px;height:18px">
+                            🏷 Mettre en promotion
+                        </label>
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px">
+                    <button type="submit" class="btn btn-violet">💾 Enregistrer</button>
+                    <button type="button" onclick="resetFormProduit()" class="btn" style="border:2px solid var(--gris)">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="../js/main.js"></script>
+<script>
+// Réécrire la base pour l'admin (un niveau plus haut)
+const BASE = '../php/';
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await verifierSession();
+    if (!utilisateurCourant || utilisateurCourant.role !== 'admin') {
+        alert('Accès réservé aux administrateurs.');
+        location.href = '../auth.html';
+        return;
+    }
+    document.getElementById('admin-nom').textContent = '👤 ' + utilisateurCourant.prenom;
+    chargerDashboard();
+});
+
+function afficherSection(nom, el) {
+    document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+    document.getElementById('section-' + nom).style.display = 'block';
+    document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('actif'));
+    if (el) el.classList.add('actif');
+
+    if (nom === 'produits')  chargerTableProduits();
+    if (nom === 'commandes') chargerTableCommandes();
+    if (nom === 'messages')  chargerMessages();
+}
+
+async function chargerDashboard() {
+    const [prods, cmds] = await Promise.all([
+        apiFetch('produits.php?action=liste'),
+        apiFetch('panier.php?action=toutes_commandes')
+    ]);
+
+    const totalCA = cmds ? cmds.filter(c=>c.statut!=='annulee').reduce((s,c)=>s+parseFloat(c.total),0) : 0;
+    const nb_promo = prods ? prods.filter(p=>p.en_promotion).length : 0;
+
+    document.getElementById('stats').innerHTML = `
+        <div class="stat-card">
+            <div class="stat-icone" style="background:#f0e6ff">📦</div>
+            <div>
+                <h3>${prods?.length || 0}</h3>
+                <p>Produits</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icone" style="background:#ffe6f0">🛒</div>
+            <div>
+                <h3>${cmds?.length || 0}</h3>
+                <p>Commandes</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icone" style="background:#fff3d0">💰</div>
+            <div>
+                <h3>${formatPrix(totalCA)}</h3>
+                <p>Chiffre d'affaires</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icone" style="background:#d0f0e6">🏷</div>
+            <div>
+                <h3>${nb_promo}</h3>
+                <p>En promotion</p>
+            </div>
+        </div>
+    `;
+
+    if (prods) {
+        document.getElementById('admin-produits-preview').innerHTML = `
+            <table>
+                <thead>
+                    <tr><th>Produit</th><th>Prix</th><th>Stock</th><th>Promo</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    ${prods.slice(0,8).map(p => `
+                        <tr>
+                            <td>${escapeHtml(p.nom)}</td>
+                            <td style="color:var(--primaire);font-weight:700">${formatPrix(p.prix)}</td>
+                            <td><span style="background:${p.stock>5?'#d1e7dd':p.stock>0?'#fff3cd':'#f8d7da'};padding:3px 10px;border-radius:20px;font-size:.8rem">${p.stock}</span></td>
+                            <td>${p.en_promotion ? '✅' : '—'}</td>
+                            <td>
+                                <button onclick="editerProduit(${p.id})" class="btn btn-sm" style="border:2px solid var(--gris);margin-right:5px">✏ Modifier</button>
+                                <button onclick="supprimerProd(${p.id})" class="btn btn-sm" style="background:var(--danger);color:white;border:none">🗑</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+}
+
+async function chargerTableProduits() {
+    const prods = await apiFetch('produits.php?action=liste');
+    const t = document.getElementById('table-produits');
+    if (!prods) { t.innerHTML = '<tr><td>Erreur</td></tr>'; return; }
+    t.innerHTML = `
+        <thead><tr><th>ID</th><th>Nom</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Promo</th><th>Actions</th></tr></thead>
+        <tbody>
+            ${prods.map(p => `
+                <tr>
+                    <td>#${p.id}</td>
+                    <td>${escapeHtml(p.nom)}</td>
+                    <td>${escapeHtml(p.categorie_nom||'')}</td>
+                    <td style="color:var(--primaire);font-weight:700">${formatPrix(p.prix)}</td>
+                    <td><span style="background:${p.stock>5?'#d1e7dd':p.stock>0?'#fff3cd':'#f8d7da'};padding:3px 10px;border-radius:20px;font-size:.8rem">${p.stock}</span></td>
+                    <td>${p.en_promotion ? '<span style="color:var(--succes)">✅ Oui</span>' : '—'}</td>
+                    <td>
+                        <button onclick="editerProduit(${p.id})" class="btn btn-sm" style="border:2px solid var(--gris);margin-right:5px">✏</button>
+                        <button onclick="supprimerProd(${p.id})" class="btn btn-sm" style="background:var(--danger);color:white;border:none">🗑</button>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
+    `;
+}
+
+async function chargerTableCommandes() {
+    const cmds = await apiFetch('panier.php?action=toutes_commandes');
+    const t = document.getElementById('table-commandes');
+    if (!cmds) { t.innerHTML = '<tr><td>Erreur</td></tr>'; return; }
+    const modes = { momo: 'MTN MOMO', orange_money: 'Orange Money', a_la_boutique: 'Boutique' };
+    t.innerHTML = `
+        <thead><tr><th>ID</th><th>Client</th><th>Téléphone</th><th>Total</th><th>Paiement</th><th>Statut</th><th>Changer statut</th></tr></thead>
+        <tbody>
+            ${cmds.map(c => `
+                <tr>
+                    <td>#${c.id}</td>
+                    <td>${escapeHtml(c.prenom)} ${escapeHtml(c.nom)}</td>
+                    <td>${escapeHtml(c.telephone||'—')}</td>
+                    <td style="font-weight:700;color:var(--primaire)">${formatPrix(c.total)}</td>
+                    <td>${modes[c.mode_paiement]||c.mode_paiement}</td>
+                    <td><span class="statut-badge statut-${c.statut}">${c.statut}</span></td>
+                    <td>
+                        <select onchange="changerStatut(${c.id}, this.value)" style="padding:5px;border-radius:6px;border:2px solid var(--gris);font-size:.82rem">
+                            <option value="en_attente" ${c.statut==='en_attente'?'selected':''}>⏳ En attente</option>
+                            <option value="confirmee" ${c.statut==='confirmee'?'selected':''}>✅ Confirmée</option>
+                            <option value="expediee" ${c.statut==='expediee'?'selected':''}>🚚 Expédiée</option>
+                            <option value="livree" ${c.statut==='livree'?'selected':''}>🎉 Livrée</option>
+                            <option value="annulee" ${c.statut==='annulee'?'selected':''}>❌ Annulée</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
+    `;
+}
+
+async function chargerMessages() {
+    const msgs = await apiFetch('contact.php?action=liste');
+    const el = document.getElementById('liste-messages');
+    if (!msgs) { el.innerHTML = 'Erreur.'; return; }
+    if (msgs.length === 0) { el.innerHTML = '<div class="vide"><div class="vide-icone">💬</div><h3>Aucun message</h3></div>'; return; }
+    el.innerHTML = msgs.map(m => `
+        <div style="border:1px solid var(--gris);border-radius:10px;padding:15px;margin-bottom:12px;${!m.lu?'border-left:4px solid var(--primaire)':''}">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                <strong>${escapeHtml(m.nom)}</strong>
+                <span style="font-size:.8rem;color:#888">${new Date(m.date_envoi).toLocaleDateString('fr-FR')}</span>
+            </div>
+            ${m.email ? `<p style="font-size:.85rem;color:#888">📧 ${escapeHtml(m.email)}</p>` : ''}
+            ${m.telephone ? `<p style="font-size:.85rem;color:#888">📱 ${escapeHtml(m.telephone)}</p>` : ''}
+            <p style="margin-top:8px;font-size:.9rem">${escapeHtml(m.message)}</p>
+            ${!m.lu ? `<button onclick="marquerLu(${m.id},this)" class="btn btn-sm" style="margin-top:8px;border:2px solid var(--gris)">✅ Marquer comme lu</button>` : '<span style="font-size:.78rem;color:var(--succes)">✅ Lu</span>'}
+        </div>
+    `).join('');
+}
+
+async function changerStatut(id, statut) {
+    await apiFetch('panier.php', { action: 'maj_statut', commande_id: id, statut }, 'POST');
+    notifier('Statut mis à jour.', 'succes');
+}
+
+async function marquerLu(id, btn) {
+    await apiFetch('contact.php', { action: 'marquer_lu', id }, 'POST');
+    btn.parentElement.style.borderLeft = 'none';
+    btn.outerHTML = '<span style="font-size:.78rem;color:var(--succes)">✅ Lu</span>';
+}
+
+async function editerProduit(id) {
+    const p = await apiFetch(`produits.php?action=detail&id=${id}`);
+    if (!p) return;
+    document.getElementById('produit-id').value = p.id;
+    document.getElementById('p-nom').value = p.nom;
+    document.getElementById('p-description').value = p.description || '';
+    document.getElementById('p-prix').value = p.prix;
+    document.getElementById('p-prix-promo').value = p.prix_promo || '';
+    document.getElementById('p-categorie').value = p.categorie_id;
+    document.getElementById('p-taille').value = p.taille || '';
+    document.getElementById('p-couleur').value = p.couleur || '';
+    document.getElementById('p-stock').value = p.stock;
+    document.getElementById('p-promo').checked = !!parseInt(p.en_promotion);
+    afficherSection('ajouter', null);
+}
+
+async function supprimerProd(id) {
+    if (!confirm('Supprimer ce produit ?')) return;
+    const data = await apiFetch('produits.php', { action: 'supprimer', id }, 'POST');
+    if (data?.succes) { notifier('Produit supprimé.', 'succes'); chargerTableProduits(); }
+}
+
+async function soumettreFormProduit(e) {
+    e.preventDefault();
+    const id = document.getElementById('produit-id').value;
+    const body = {
+        action: id ? 'modifier' : 'ajouter',
+        nom: document.getElementById('p-nom').value,
+        description: document.getElementById('p-description').value,
+        prix: document.getElementById('p-prix').value,
+        prix_promo: document.getElementById('p-prix-promo').value,
+        categorie_id: document.getElementById('p-categorie').value,
+        taille: document.getElementById('p-taille').value,
+        couleur: document.getElementById('p-couleur').value,
+        stock: document.getElementById('p-stock').value,
+    };
+    if (document.getElementById('p-promo').checked) body.en_promotion = '1';
+    const url = id ? `produits.php?id=${id}` : 'produits.php';
+    const data = await apiFetch(url, body, 'POST');
+    if (data?.succes) {
+        notifier(id ? 'Produit modifié !' : 'Produit ajouté !', 'succes');
+        resetFormProduit();
+        afficherSection('produits', null);
+    }
+}
+
+function resetFormProduit() {
+    document.getElementById('form-produit').reset();
+    document.getElementById('produit-id').value = '';
+}
+</script>
+</body>
+</html>
